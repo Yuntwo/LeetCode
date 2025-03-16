@@ -1,0 +1,92 @@
+class Solution {
+    public int findMinDifference(List<String> timePoints) {
+        quickSort(timePoints, 0, timePoints.size() - 1);
+        int res = Integer.MAX_VALUE;
+        for (int i = 0; i < timePoints.size(); i++) {
+            // 注意首尾的情况也要考虑
+            int temp = diff(timePoints.get(i), timePoints.get((i + 1) % timePoints.size()));
+            if (temp < res) {
+                res = temp;
+            }
+        }
+        return res;
+    }
+
+    private int diff(String a, String b) {
+        String[] aa = a.split(":");
+        String[] bb = b.split(":");
+        // 也可以用Integer.parseInt
+        int minutesA = Integer.valueOf(aa[0]) * 60 + Integer.valueOf(aa[1]);
+        int minutesB = Integer.valueOf(bb[0]) * 60 + Integer.valueOf(bb[1]);
+        int res = minutesB - minutesA;
+        // 注意考虑diff为负数的情况要圆回去
+        if (res < 0) {
+            res += 24 * 60;
+        }
+        return res;
+    }
+
+
+    /**
+     * Failure1
+     * 这里大于小于字符比较逻辑不太容易对，还是直接比较分钟值靠谱
+     * 不是只要aa小于bb就返回true，最后返回false；也不是只要aa大于bb就返回false，最后返回true
+     */
+    private boolean lessEqual(String a, String b) {
+        String[] aa = a.split(":");
+        String[] bb = b.split(":");
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < 2; j++) {
+                if (aa[i].charAt(j) < bb[i].charAt(j)) {
+                    return true;
+                } else if (aa[i].charAt(j) > bb[i].charAt(j)){
+                    return false;
+                }
+            }
+        }
+        // 这是最后a、b相等的情况返回true
+        return true;
+    }
+
+    /**
+     * 注意递归函数一定要有底层的递归返回条件，否则没有办法跳出递归
+     */
+    private void quickSort(List<String> timePoints, int left, int right) {
+        if (left >= right) {
+            return;
+        }
+        int index = partition(timePoints, left, right);
+        quickSort(timePoints, left, index - 1);
+        quickSort(timePoints, index + 1, right);
+    }
+
+    private int partition(List<String> timePoints, int left, int right) {
+        String pivot = timePoints.get(left);
+        // 注意这里不能有等于，有等于会在等于的条件下多循环一次导致left超过right，这样可能造成访问越界
+        while (left < right) {
+            while (left < right && lessEqual(pivot, timePoints.get(right))) {
+                right--;
+            }
+            timePoints.set(left, timePoints.get(right));
+            while (left < right && lessEqual(timePoints.get(left), pivot)) {
+                left++;
+            }
+            timePoints.set(right, timePoints.get(left));
+        }
+        timePoints.set(left, pivot);
+        return left;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        List<String> list = new ArrayList<>();
+        list.add("12:01");
+        list.add("00:10");
+        list.add("00:01");
+        int res = solution.findMinDifference(list);
+        System.out.println(res);
+    }
+}
+
+//runtime:110 ms
+//memory:43.9 MB

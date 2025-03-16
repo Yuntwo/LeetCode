@@ -1,0 +1,33 @@
+class Solution {
+    public int longestValidParentheses(String s) {
+        int res = 0;
+        int index = 0;
+        while (index < s.length()) {
+            if (s.charAt(index) == '(') {
+                Deque<Character> deque = new ArrayDeque();
+                deque.push(s.charAt(index++));
+                while (index < s.length()) {
+                    if ((deque.peek() == '(' && s.charAt(index) == ')')
+                            || (deque.peek() == ')' && s.charAt(index) == '(')) {
+                        deque.push(s.charAt(index++));
+                    } else {
+                        int temp = deque.peek() == ')' ? deque.size() : (deque.size() - 1);
+                        res = Math.max(res, temp);
+                        break;
+                    }
+                }
+                int temp = deque.peek() == ')' ? deque.size() : (deque.size() - 1);
+                res = Math.max(res, temp);
+            } else {
+                index++;
+            }
+        }
+        return res;
+    }
+}
+//total_testcases:231
+//total_correct:73
+//input_formatted:"()(())"
+//expected_output:6
+//code_output:2
+//last_testcase:"()(())"

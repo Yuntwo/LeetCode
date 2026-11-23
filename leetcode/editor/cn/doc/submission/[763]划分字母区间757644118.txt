@@ -1,0 +1,49 @@
+// 精简版
+func partitionLabels(s string) []int {
+	pos := map[rune]int{}
+	for i, c := range s {
+		pos[c] = i
+	}
+	res := []int{}
+	// right表示当前看到的片段中应该到达的最远位置
+	// 遍历的时候一方面要更新right，一方面如果当前片段到达了right的位置说明全部满足条件了，并且为了切更多这个时候就应该切了
+	start, right:= 0, 0
+	for i, c := range s {
+		right = max(pos[c], right)
+		if i == right {
+			res = append(res, i - start + 1)
+			start = i + 1
+		}
+	}
+	return res
+}
+
+
+// 粗糙版
+// func partitionLabels(s string) []int {
+//     pos := map[rune]int{}
+// 	for i, c := range s {
+// 		// 这里其实可以不用判断，直接用递增的最大值覆盖即可
+// 		p, ok := pos[c]
+// 		if ok {
+//            pos[c] = max(p, i)
+//         }  else {
+// 			pos[c] = i
+//         }
+//     }
+// 	res := []int{}
+// 	temp := 0
+// 	right := 0
+// 	for i, c := range s {
+// 		p, _ := pos[c]
+// 		right = max(p, right)
+// 		if i == right {
+// 			res = append(res, i - temp + 1)
+// 			temp = i + 1
+//         }
+//     }
+// 	return res
+// }
+
+//runtime:0 ms
+//memory:4 MB

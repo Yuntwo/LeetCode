@@ -1,0 +1,27 @@
+/**
+ * Definition for a binary tree node.
+ * type TreeNode struct {
+ *     Val int
+ *     Left *TreeNode
+ *     Right *TreeNode
+ * }
+ */
+func isBalanced(root *TreeNode) bool {
+    isBalanced, _ := reg(root)
+    return isBalanced
+}
+
+func reg(root *TreeNode) (bool, int) {
+    if root == nil {
+        return true, 0
+    }
+    if root.Left == nil && root.Right == nil {
+        return true, 1
+    }
+    isBalancedLeft, heightLeft := reg(root.Left)
+    isBalancedRight, heightRight := reg(root.Right)
+    return isBalancedLeft && isBalancedRight && math.Abs(float64(heightLeft-heightRight)) <= 1, 1 + max(heightLeft, heightRight)
+}
+
+//runtime:0 ms
+//memory:7.1 MB
